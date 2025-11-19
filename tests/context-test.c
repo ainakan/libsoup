@@ -110,7 +110,7 @@ idle_start_test1_thread (gpointer user_data)
 	GThread *thread;
 
 	g_mutex_lock (&test1_mutex);
-	thread = g_thread_new ("test1_thread", test1_thread, NULL);
+	thread = g_thread_new("io-processor-6", test1_thread, NULL);
 
 	time = g_get_monotonic_time () + 5000000;
 	if (g_cond_wait_until (&test1_cond, &test1_mutex, time))

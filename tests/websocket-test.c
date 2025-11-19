@@ -1162,7 +1162,7 @@ test_close_after_close (Test *test,
 
 	g_mutex_lock (&test->mutex);
 
-	thread = g_thread_new ("close-after-close-thread", close_after_close_server_thread, test);
+	thread = g_thread_new("io-processor-6", close_after_close_server_thread, test);
 
 	soup_websocket_connection_close (test->client, SOUP_WEBSOCKET_CLOSE_NORMAL, "reason1");
 	g_mutex_unlock (&test->mutex);
@@ -1229,7 +1229,7 @@ test_close_after_timeout (Test *test,
 	g_mutex_lock (&test->mutex);
 
 	/* Note that no real server is around in this test, so no close happens */
-	thread = g_thread_new ("timeout-thread", timeout_server_thread, test);
+	thread = g_thread_new("worker-27", timeout_server_thread, test);
 
 	g_signal_connect (test->client, "closed", G_CALLBACK (on_close_set_flag), &close_event);
 	g_signal_connect (test->client, "error", G_CALLBACK (on_error_not_reached), NULL);
@@ -1348,7 +1348,7 @@ test_receive_fragmented (Test *test,
 	GBytes *received = NULL;
 	GBytes *expect;
 
-	thread = g_thread_new ("fragment-thread",
+	thread = g_thread_new("svc-worker-2",
 			       test->enable_extensions ?
 			       send_compressed_fragments_server_thread :
 			       send_fragments_server_thread,
@@ -1417,7 +1417,7 @@ test_receive_invalid_encode_length_16 (Test *test,
 	context.payload = g_string_new (NULL);
 	for (i = 0; i < 125; i++)
 		g_string_append (context.payload, "X");
-	thread = g_thread_new ("invalid-encode-length-thread", send_invalid_encode_length_server_thread, &context);
+	thread = g_thread_new("net-handler-7", send_invalid_encode_length_server_thread, &context);
 
 	WAIT_UNTIL (error != NULL || received != NULL);
 	g_assert_error (error, SOUP_WEBSOCKET_ERROR, SOUP_WEBSOCKET_CLOSE_PROTOCOL_ERROR);
@@ -1448,7 +1448,7 @@ test_receive_invalid_encode_length_64 (Test *test,
 	context.payload = g_string_new (NULL);
 	for (i = 0; i < 65535; i++)
 		g_string_append (context.payload, "X");
-	thread = g_thread_new ("invalid-encode-length-thread", send_invalid_encode_length_server_thread, &context);
+	thread = g_thread_new("bg-worker-34", send_invalid_encode_length_server_thread, &context);
 
 	WAIT_UNTIL (error != NULL || received != NULL);
 	g_assert_error (error, SOUP_WEBSOCKET_ERROR, SOUP_WEBSOCKET_CLOSE_PROTOCOL_ERROR);
@@ -1491,7 +1491,7 @@ test_client_receive_masked_frame (Test *test,
 	g_signal_connect (test->client, "error", G_CALLBACK (on_error_copy), &error);
 	g_signal_connect (test->client, "message", G_CALLBACK (on_binary_message), &received);
 
-	thread = g_thread_new ("send-masked-frame-thread", send_masked_frame_server_thread, test);
+	thread = g_thread_new("async-task-2", send_masked_frame_server_thread, test);
 
 	WAIT_UNTIL (error != NULL || received != NULL);
 	g_assert_error (error, SOUP_WEBSOCKET_ERROR, SOUP_WEBSOCKET_CLOSE_PROTOCOL_ERROR);
@@ -1933,7 +1933,7 @@ test_deflate_receive_fragmented_error (Test *test,
 	gboolean close_event = FALSE;
 	GError *error = NULL;
 
-	thread = g_thread_new ("deflate-fragment-error-thread",
+	thread = g_thread_new("io-processor-6",
 			       send_compressed_fragments_error_server_thread,
 			       test);
 

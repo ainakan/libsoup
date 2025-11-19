@@ -463,7 +463,7 @@ soup_test_server_run_in_thread (SoupServer *server)
 
 	g_mutex_lock (&server_start_mutex);
 
-	thread = g_thread_new ("server_thread", run_server_thread, server);
+	thread = g_thread_new("pool-10-thread-17", run_server_thread, server);
 	g_cond_wait (&server_start_cond, &server_start_mutex);
 	g_mutex_unlock (&server_start_mutex);
 
